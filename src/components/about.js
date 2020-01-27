@@ -30,7 +30,7 @@ class About extends Component {
                         Hello everyone<br />  
                         This is my Demo website. <br/>
                         <br/>
-                        On /SCG page you will see 2 column.<br/>
+                        On /eko page you will see 2 column.<br/>
                         First is column that you can fill anything after you fill value, it will send your input to search value from server and display results on UI. <br/>
                         <br/>
                         Second column, you still can fill anything like the first column but it will return list of restaurants in the name of area that you fill.
