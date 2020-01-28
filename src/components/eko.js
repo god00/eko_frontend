@@ -257,7 +257,7 @@ class Eko extends Component {
 			const { possible, paths } = possibleObject;
 			const { pathArr, costOrdered } = paths;
 			return (
-				<div>
+				<div style={{ textAlign: "center" }}>
 					Number of possibles: <ResultText>{possible}</ResultText>
 					{pathArr.map((path, i) => {
 						const allTown = path.split('');
