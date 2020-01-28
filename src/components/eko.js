@@ -2,8 +2,13 @@ import React, { Component } from 'react';
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import { WithContext as ReactTags } from 'react-tag-input';
+import styled from 'styled-components';
 
 import Api from '../services/api';
+
+const PossibleDiv = styled.div`
+	display: flex;
+`
 
 class Eko extends Component {
 	constructor(props) {
@@ -12,7 +17,8 @@ class Eko extends Component {
 			tags: [],
 			routeId: null,
 			mode: '',
-			cost: null
+			cost: null,
+			possibleObject: null
 		};
 		this.handleDelete = this.handleDelete.bind(this);
 		this.handleAddition = this.handleAddition.bind(this);
@@ -28,7 +34,7 @@ class Eko extends Component {
 		const regex = /^[a-zA-Z][a-zA-Z][0-9]+$/i;
 		tag.text = tag.text.toUpperCase();
 		if (tag.text[0] !== tag.text[1] && regex.test(tag.text)) {
-			this.setState(state => ({ tags: [...state.tags, tag] }));
+			this.setState(state => ({ tags: [...state.tags, tag], routeId: null, mode: null }));
 		}
 	}
 
@@ -53,7 +59,7 @@ class Eko extends Component {
 	}
 
 	onRadioChange = (e) => {
-		this.setState({ mode: e.currentTarget.value, cost: null });
+		this.setState({ mode: e.currentTarget.value, cost: null, possibleObject: null });
 	}
 
 	calculateCost = (e) => {
@@ -76,6 +82,41 @@ class Eko extends Component {
 	calculatePossible = (e) => {
 		e.preventDefault();
 		e.stopPropagation();
+		const form = e.currentTarget;
+		if (form.checkValidity()) {
+			const source = this.inputSource.value;
+			const destination = this.inputDestination.value;
+			const condition = {
+				allowRouteTwice: this.checkRouteTwice.checked,
+			};
+			if (this.inputMaximun.value !== '') {
+				condition.maximunStop = parseInt(this.inputMaximun.value);
+			}
+			if (this.inputLessthan.value !== '') {
+				condition.lessThan = parseInt(this.inputLessthan.value);
+			}
+			const { routeId } = this.state;
+			Api.possibleRoute(routeId, source, destination, condition)
+				.then((possibleObject) => {
+					this.setState({ possibleObject });
+				})
+		}
+	}
+
+	validatePossibleInputNumber = (e) => {
+		const value = e.currentTarget.value;
+		const regex = /^[0-9]+$/i;
+		if (!regex.test(value)) {
+			e.currentTarget.value = "";
+		}
+	}
+
+	validatePossibleInputLetter = (e) => {
+		e.currentTarget.value = e.currentTarget.value.toUpperCase();
+		const regex = /^[A-Z]$/i;
+		if (!regex.test(e.currentTarget.value)) {
+			e.currentTarget.value = "";
+		}
 	}
 
 	renderCalculateButton() {
@@ -115,17 +156,60 @@ class Eko extends Component {
 
 	renderOptions() {
 		const { mode, cost } = this.state;
-		console.log(cost)
 		if (mode === 'cost') {
 			return (
 				<Form onSubmit={this.calculateCost}>
-					<Form.Control type="text" className="myInput" ref={node => (this.inputNode = node)} onFocus={(e) => { e.currentTarget.select() }} placeholder="Fill your path" required />
+					<Form.Control type="text" placeholder="Fill your path" className="myInput" required ref={node => (this.inputNode = node)} onFocus={(e) => { e.currentTarget.select() }} />
 					<Form.Control.Feedback type="invalid">
 						Please fill a path.
           			</Form.Control.Feedback>
-					<Button variant="danger" size="sm" type="submit">Get Cost</Button>
+					<Button variant="danger" size="sm" type="submit">Calculate</Button>
 					<span>{cost != null ? cost : ''}</span>
 				</Form>
+			)
+		}
+		else if (mode === 'possible') {
+			return (
+				<Form onSubmit={this.calculatePossible}>
+					<Form.Check type="checkbox" label="Allow route twice" ref={node => (this.checkRouteTwice = node)} />
+					<Form.Control type="text" placeholder="Source.." className="myInput" required ref={node => (this.inputSource = node)} onFocus={(e) => { e.currentTarget.select() }} onBlur={this.validatePossibleInputLetter} />
+					<Form.Control type="text" placeholder="Destination.." className="myInput" required ref={node => (this.inputDestination = node)} onFocus={(e) => { e.currentTarget.select() }} onBlur={this.validatePossibleInputLetter} />
+					Maximun Stop :
+					<Form.Control type="text" placeholder="Fill number" className="myInput" ref={node => (this.inputMaximun = node)} onFocus={(e) => { e.currentTarget.select() }} onBlur={this.validatePossibleInputNumber} />
+					Cost less than :
+					<Form.Control type="text" placeholder="Fill number" className="myInput" ref={node => (this.inputLessthan = node)} onFocus={(e) => { e.currentTarget.select() }} onBlur={this.validatePossibleInputNumber} />
+					<Button variant="danger" size="sm" type="submit">Calculate</Button>
+					{this.renderPossibleAndPaths()}
+				</Form>
+			)
+		}
+	}
+
+	renderPossibleAndPaths() {
+		const { possibleObject } = this.state;
+		if (possibleObject) {
+			const { possible, paths } = possibleObject;
+			const { pathArr, costOrdered } = paths;
+			return (
+				<div>
+					Number of possibles: <span>{possible}</span>
+					{pathArr.map((path, i) => {
+						const allTown = path.split('');
+						return costOrdered[i].map((cost, j) => {
+							return (
+								<PossibleDiv key={path}>
+									{j === 0 ? <span>{allTown[j]}</span> : null}
+									<div>
+										{cost}
+										<hr />
+									</div>
+									<span>{allTown[j + 1]}</span>
+								</PossibleDiv>
+							)
+						})
+
+					})}
+				</div>
 			)
 		}
 	}
