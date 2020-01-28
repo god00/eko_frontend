@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
-import Card from 'react-bootstrap/Card'
 import { WithContext as ReactTags } from 'react-tag-input';
 import styled from 'styled-components';
 
@@ -179,18 +178,14 @@ class Eko extends Component {
 		const { mode, cost } = this.state;
 		if (mode === 'cost') {
 			return (
-				<Card>
-					<Card.Body>
-						<Form onSubmit={this.calculateCost}>
-							<Form.Control type="text" placeholder="Fill your path" className="myInput" required ref={node => (this.inputNode = node)} onFocus={(e) => { e.currentTarget.select() }} />
-							<Form.Control.Feedback type="invalid">
-								Please fill a path.
+				<Form onSubmit={this.calculateCost}>
+					<Form.Control type="text" placeholder="Fill your path" className="myInput" required ref={node => (this.inputNode = node)} onFocus={(e) => { e.currentTarget.select() }} />
+					<Form.Control.Feedback type="invalid">
+						Please fill a path.
           					</Form.Control.Feedback>
-							<Button variant="danger" size="sm" type="submit">Calculate</Button>
-							<span>{cost != null ? cost : ''}</span>
-						</Form>
-					</Card.Body>
-				</Card>
+					<Button variant="danger" size="sm" type="submit">Calculate</Button>
+					<span>{cost != null ? cost : ''}</span>
+				</Form>
 			)
 		}
 		else if (mode === 'possible') {
