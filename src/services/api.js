@@ -1,6 +1,8 @@
 import Request from './request';
-const request = new Request()
-const cachingApiLocal = localStorage.getItem('cachingApi');
+
+const request = new Request();
+
+const cachingApiLocal = localStorage.getItem('eko-caching-api');
 const cachingApi = cachingApiLocal ? JSON.parse(cachingApiLocal) : {
     id: {},
     cost: {},
@@ -15,7 +17,7 @@ class Api {
                 resolve(cachingApi.id[listStr]);
             }
             else {
-                request.post('/api/input', { inputlist })
+                request.post('/api/input', { input: inputlist })
                     .then(res => {
                         cachingApi.id[listStr] = res;
                         localStorage.setItem('cachingApi', JSON.stringify(cachingApi));
