@@ -27,6 +27,7 @@ class Top extends Component {
             <Nav className="navbar navbar-expand-lg navbar-light bg-light">
                 <FlexUl className="navbar-nav mr-auto">
                     <LiWithMargin><Link to={'/'} className="nav-link"><MyText>Home</MyText></Link></LiWithMargin>
+                    <LiWithMargin><Link to={'/eko'} className="nav-link"><MyText>Eko</MyText></Link></LiWithMargin>
                     <LiWithMargin><Link to={'/about'} className="nav-link"><MyText>About</MyText></Link></LiWithMargin>
                 </FlexUl>
             </Nav>

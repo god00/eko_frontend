@@ -1,15 +1,18 @@
 {
   "name": "eko_frontend",
-  "version": "0.0.0",
+  "version": "0.0.3",
   "private": true,
   "dependencies": {
     "bootstrap": "^4.3.1",
     "node-sass": "^4.13.0",
     "react": "^16.11.0",
     "react-bootstrap": "^1.0.0-beta.14",
+    "react-dnd": "^5.0.0",
+    "react-dnd-html5-backend": "^3.0.2",
     "react-dom": "^16.11.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.2.0",
+    "react-tag-input": "^6.4.2",
     "styled-components": "^4.4.1"
   },
   "scripts": {
