@@ -216,7 +216,7 @@ class Eko extends Component {
 			return (
 				<OptionLayout>
 					<OptionForm onSubmit={this.calculateCost}>
-						<Form.Control type="text" placeholder="Fill your path without space (e.g. 'ABC', 'AB')" className="myInput" required ref={node => (this.inputNode = node)} onFocus={(e) => { e.currentTarget.select() }} />
+						<Form.Control type="text" placeholder="(e.g. 'AB', 'ABC', 'ABCDEF')" className="myInput" required ref={node => (this.inputNode = node)} onFocus={(e) => { e.currentTarget.select() }} />
 						<Form.Control.Feedback type="invalid">
 							Please fill a path.
           					</Form.Control.Feedback>
