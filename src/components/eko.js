@@ -8,6 +8,10 @@ import Api from '../services/api';
 
 const PossibleDiv = styled.div`
 	display: flex;
+	justify-content: center;
+    margin: 10px;
+	padding: 12px;
+    border: dotted 1px;
 `
 const CostLine = styled.div`
     position: relative;
@@ -30,11 +34,22 @@ const RadioForm = styled(Form)`
 	margin: 20px 15%;
 `
 
+const CostText = styled.span`
+	color: lightcoral;
+`
+
+const ResultText = styled.span`
+	font-weight: bold;
+`
+
 const OptionForm = styled(Form)`
 	display: flex;
     justify-content: center;
 	align-items: center;
 	margin: 20px;
+`
+const PossibleOptionForm = styled(OptionForm)`
+	flex-direction: column;
 `
 
 const OptionLayout = styled.div`
@@ -107,12 +122,15 @@ class Eko extends Component {
 		if (form.checkValidity()) {
 			const { routeId } = this.state;
 			this.inputNode.value = this.inputNode.value.toUpperCase();
-			const regex = /^[A-Z]+$/i
+			const regex = /^[A-Z]+$/i;
 			if (regex.test(this.inputNode.value)) {
 				Api.calculateCost(routeId, this.inputNode.value)
 					.then((cost) => {
 						this.setState({ cost });
 					})
+			}
+			else {
+				this.inputNode.value = '';
 			}
 		}
 	}
@@ -202,26 +220,32 @@ class Eko extends Component {
 						<Form.Control.Feedback type="invalid">
 							Please fill a path.
           					</Form.Control.Feedback>
-						<ButtonWithMarginLeft variant="danger" size="sm" type="submit">Calculate</ButtonWithMarginLeft>
+						<ButtonWithMarginLeft variant="success" size="sm" type="submit">Calculate</ButtonWithMarginLeft>
 					</OptionForm>
-					<span>{cost != null ? `Total cost : ${cost}` : ''}</span>
+					<span>{cost != null ? 'Total cost : ' : ''}
+						<ResultText>{cost}</ResultText>
+					</span>
 				</OptionLayout>
 			)
 		}
 		else if (mode === 'possible') {
 			return (
 				<OptionLayout>
-					<OptionForm onSubmit={this.calculatePossible}>
-						<Form.Control type="text" placeholder="Source.." className="myInput" required ref={node => (this.inputSource = node)} onFocus={(e) => { e.currentTarget.select() }} onBlur={this.validatePossibleInputLetter} />
-						<Form.Control type="text" placeholder="Destination.." className="myInput" required ref={node => (this.inputDestination = node)} onFocus={(e) => { e.currentTarget.select() }} onBlur={this.validatePossibleInputLetter} />
-						<Form.Check type="checkbox" label="Allow route twice" ref={node => (this.checkRouteTwice = node)} />
-						Maximun Stop :
-						<Form.Control type="text" placeholder="Fill number" className="myInput" ref={node => (this.inputMaximun = node)} onFocus={(e) => { e.currentTarget.select() }} onBlur={this.validatePossibleInputNumber} />
-						Cost less than :
-						<Form.Control type="text" placeholder="Fill number" className="myInput" ref={node => (this.inputLessthan = node)} onFocus={(e) => { e.currentTarget.select() }} onBlur={this.validatePossibleInputNumber} />
-						<ButtonWithMarginLeft variant="danger" size="sm" type="submit">Calculate</ButtonWithMarginLeft>
+					<PossibleOptionForm onSubmit={this.calculatePossible}>
+						<div style={{ marginBottom: "10px", display: "flex" }}>
+							<Form.Check style={{ marginRight: "25px" }} type="checkbox" label="Allow route twice" ref={node => (this.checkRouteTwice = node)} />
+							<Form.Control style={{ marginRight: "10px" }} type="text" placeholder="Source.." className="myInput" required ref={node => (this.inputSource = node)} onFocus={(e) => { e.currentTarget.select() }} onBlur={this.validatePossibleInputLetter} />
+							<Form.Control type="text" placeholder="Destination.." className="myInput" required ref={node => (this.inputDestination = node)} onFocus={(e) => { e.currentTarget.select() }} onBlur={this.validatePossibleInputLetter} />
+							<ButtonWithMarginLeft variant="success" size="sm" type="submit">Calculate</ButtonWithMarginLeft>
+						</div>
+						<div style={{ marginBottom: "10px", width: "100%", display: "flex", justifyContent: "space-between" }}>
+							<span>Maximun Stop : </span>
+							<Form.Control type="text" placeholder="Fill number" className="myInput" ref={node => (this.inputMaximun = node)} onFocus={(e) => { e.currentTarget.select() }} onBlur={this.validatePossibleInputNumber} />
+							<span>Cost less than : </span>
+							<Form.Control type="text" placeholder="Fill number" className="myInput" ref={node => (this.inputLessthan = node)} onFocus={(e) => { e.currentTarget.select() }} onBlur={this.validatePossibleInputNumber} />
+						</div>
 						{this.renderPossibleAndPaths()}
-					</OptionForm>
+					</PossibleOptionForm>
 				</OptionLayout>
 			)
 		}
@@ -234,7 +258,7 @@ class Eko extends Component {
 			const { pathArr, costOrdered } = paths;
 			return (
 				<div>
-					Number of possibles: <span>{possible}</span>
+					Number of possibles: <ResultText>{possible}</ResultText>
 					{pathArr.map((path, i) => {
 						const allTown = path.split('');
 
@@ -245,7 +269,7 @@ class Eko extends Component {
 										<React.Fragment>
 											{j === 0 ? <span>{allTown[j]}</span> : null}
 											<CostLine>
-												{cost}
+												<CostText>{cost}</CostText>
 												<hr />
 											</CostLine>
 											<span>{allTown[j + 1]}</span>
