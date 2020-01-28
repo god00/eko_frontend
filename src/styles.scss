@@ -21,14 +21,16 @@ input[type="color"]:focus,
   outline: 0 none;
 }
 
-
-/* Example Styles for React Tags*/
 #app {
   padding: 40px;
 }
 
 div.ReactTags__tags {
     position: relative;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 60%;
 }
 
 /* Styles for the input */

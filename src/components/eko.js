@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
+import Card from 'react-bootstrap/Card'
 import { WithContext as ReactTags } from 'react-tag-input';
 import styled from 'styled-components';
 
@@ -8,6 +9,26 @@ import Api from '../services/api';
 
 const PossibleDiv = styled.div`
 	display: flex;
+`
+const CostLine = styled.div`
+    position: relative;
+    text-align: center;
+	width: 30px;
+	margin: -10px 5px;
+	hr{
+		margin: 0;
+	}
+`
+
+const LayoutInput = styled.div`
+	display: flex;
+    margin: 0 10% 10px 10%;
+`
+
+const RadioForm = styled(Form)`
+	display: flex;
+	justify-content: space-evenly;
+	margin: 20px;
 `
 
 class Eko extends Component {
@@ -27,7 +48,7 @@ class Eko extends Component {
 
 	handleDelete(i) {
 		const { tags } = this.state;
-		this.setState({ tags: tags.filter((tag, index) => index !== i), });
+		this.setState({ tags: tags.filter((tag, index) => index !== i), routeId: null, mode: null });
 	}
 
 	handleAddition(tag) {
@@ -134,7 +155,7 @@ class Eko extends Component {
 		const { routeId } = this.state;
 		if (routeId != null) {
 			return (
-				<Form>
+				<RadioForm>
 					<Form.Check
 						type="radio"
 						value="cost"
@@ -149,7 +170,7 @@ class Eko extends Component {
 						name="calculatedType"
 						onChange={this.onRadioChange}
 					/>
-				</Form>
+				</RadioForm>
 			)
 		}
 	}
@@ -158,22 +179,26 @@ class Eko extends Component {
 		const { mode, cost } = this.state;
 		if (mode === 'cost') {
 			return (
-				<Form onSubmit={this.calculateCost}>
-					<Form.Control type="text" placeholder="Fill your path" className="myInput" required ref={node => (this.inputNode = node)} onFocus={(e) => { e.currentTarget.select() }} />
-					<Form.Control.Feedback type="invalid">
-						Please fill a path.
-          			</Form.Control.Feedback>
-					<Button variant="danger" size="sm" type="submit">Calculate</Button>
-					<span>{cost != null ? cost : ''}</span>
-				</Form>
+				<Card>
+					<Card.Body>
+						<Form onSubmit={this.calculateCost}>
+							<Form.Control type="text" placeholder="Fill your path" className="myInput" required ref={node => (this.inputNode = node)} onFocus={(e) => { e.currentTarget.select() }} />
+							<Form.Control.Feedback type="invalid">
+								Please fill a path.
+          					</Form.Control.Feedback>
+							<Button variant="danger" size="sm" type="submit">Calculate</Button>
+							<span>{cost != null ? cost : ''}</span>
+						</Form>
+					</Card.Body>
+				</Card>
 			)
 		}
 		else if (mode === 'possible') {
 			return (
 				<Form onSubmit={this.calculatePossible}>
-					<Form.Check type="checkbox" label="Allow route twice" ref={node => (this.checkRouteTwice = node)} />
 					<Form.Control type="text" placeholder="Source.." className="myInput" required ref={node => (this.inputSource = node)} onFocus={(e) => { e.currentTarget.select() }} onBlur={this.validatePossibleInputLetter} />
 					<Form.Control type="text" placeholder="Destination.." className="myInput" required ref={node => (this.inputDestination = node)} onFocus={(e) => { e.currentTarget.select() }} onBlur={this.validatePossibleInputLetter} />
+					<Form.Check type="checkbox" label="Allow route twice" ref={node => (this.checkRouteTwice = node)} />
 					Maximun Stop :
 					<Form.Control type="text" placeholder="Fill number" className="myInput" ref={node => (this.inputMaximun = node)} onFocus={(e) => { e.currentTarget.select() }} onBlur={this.validatePossibleInputNumber} />
 					Cost less than :
@@ -195,18 +220,25 @@ class Eko extends Component {
 					Number of possibles: <span>{possible}</span>
 					{pathArr.map((path, i) => {
 						const allTown = path.split('');
-						return costOrdered[i].map((cost, j) => {
-							return (
-								<PossibleDiv key={path}>
-									{j === 0 ? <span>{allTown[j]}</span> : null}
-									<div>
-										{cost}
-										<hr />
-									</div>
-									<span>{allTown[j + 1]}</span>
-								</PossibleDiv>
-							)
-						})
+
+						return (
+							<PossibleDiv key={path}>
+								{costOrdered[i].map((cost, j) => {
+									return (
+										<React.Fragment>
+											{j === 0 ? <span>{allTown[j]}</span> : null}
+											<CostLine>
+												{cost}
+												<hr />
+											</CostLine>
+											<span>{allTown[j + 1]}</span>
+										</React.Fragment>
+									)
+								})
+								}
+
+							</PossibleDiv>
+						)
 
 					})}
 				</div>
@@ -219,15 +251,18 @@ class Eko extends Component {
 		return (
 			<div>
 				<h2>Eko test 2</h2>
-				<ReactTags
-					tags={tags}
-					handleDelete={this.handleDelete}
-					handleAddition={this.handleAddition}
-					handleDrag={this.handleDrag}
-					allowUnique={false}
-					placeholder="Add new route"
-				/>
-				{this.renderCalculateButton()}
+				<LayoutInput>
+					<ReactTags
+						className="tagsLayout"
+						tags={tags}
+						handleDelete={this.handleDelete}
+						handleAddition={this.handleAddition}
+						handleDrag={this.handleDrag}
+						allowUnique={false}
+						placeholder="Add new route"
+					/>
+					{this.renderCalculateButton()}
+				</LayoutInput>
 				{this.renderRadioButton()}
 				{this.renderOptions()}
 			</div>
