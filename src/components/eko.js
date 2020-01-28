@@ -27,7 +27,25 @@ const LayoutInput = styled.div`
 const RadioForm = styled(Form)`
 	display: flex;
 	justify-content: space-evenly;
+	margin: 20px 15%;
+`
+
+const OptionForm = styled(Form)`
+	display: flex;
+    justify-content: center;
+	align-items: center;
 	margin: 20px;
+`
+
+const OptionLayout = styled.div`
+	display: flex;
+	justify-content: center;
+    align-items: center;
+    flex-direction: column;
+`
+
+const ButtonWithMarginLeft = styled(Button)`
+	margin-left: 10px;
 `
 
 class Eko extends Component {
@@ -178,29 +196,33 @@ class Eko extends Component {
 		const { mode, cost } = this.state;
 		if (mode === 'cost') {
 			return (
-				<Form onSubmit={this.calculateCost}>
-					<Form.Control type="text" placeholder="Fill your path" className="myInput" required ref={node => (this.inputNode = node)} onFocus={(e) => { e.currentTarget.select() }} />
-					<Form.Control.Feedback type="invalid">
-						Please fill a path.
+				<OptionLayout>
+					<OptionForm onSubmit={this.calculateCost}>
+						<Form.Control type="text" placeholder="Fill your path" className="myInput" required ref={node => (this.inputNode = node)} onFocus={(e) => { e.currentTarget.select() }} />
+						<Form.Control.Feedback type="invalid">
+							Please fill a path.
           					</Form.Control.Feedback>
-					<Button variant="danger" size="sm" type="submit">Calculate</Button>
-					<span>{cost != null ? cost : ''}</span>
-				</Form>
+						<ButtonWithMarginLeft variant="danger" size="sm" type="submit">Calculate</ButtonWithMarginLeft>
+					</OptionForm>
+					<span>{cost != null ? `Total cost : ${cost}` : ''}</span>
+				</OptionLayout>
 			)
 		}
 		else if (mode === 'possible') {
 			return (
-				<Form onSubmit={this.calculatePossible}>
-					<Form.Control type="text" placeholder="Source.." className="myInput" required ref={node => (this.inputSource = node)} onFocus={(e) => { e.currentTarget.select() }} onBlur={this.validatePossibleInputLetter} />
-					<Form.Control type="text" placeholder="Destination.." className="myInput" required ref={node => (this.inputDestination = node)} onFocus={(e) => { e.currentTarget.select() }} onBlur={this.validatePossibleInputLetter} />
-					<Form.Check type="checkbox" label="Allow route twice" ref={node => (this.checkRouteTwice = node)} />
-					Maximun Stop :
-					<Form.Control type="text" placeholder="Fill number" className="myInput" ref={node => (this.inputMaximun = node)} onFocus={(e) => { e.currentTarget.select() }} onBlur={this.validatePossibleInputNumber} />
-					Cost less than :
-					<Form.Control type="text" placeholder="Fill number" className="myInput" ref={node => (this.inputLessthan = node)} onFocus={(e) => { e.currentTarget.select() }} onBlur={this.validatePossibleInputNumber} />
-					<Button variant="danger" size="sm" type="submit">Calculate</Button>
-					{this.renderPossibleAndPaths()}
-				</Form>
+				<OptionLayout>
+					<OptionForm onSubmit={this.calculatePossible}>
+						<Form.Control type="text" placeholder="Source.." className="myInput" required ref={node => (this.inputSource = node)} onFocus={(e) => { e.currentTarget.select() }} onBlur={this.validatePossibleInputLetter} />
+						<Form.Control type="text" placeholder="Destination.." className="myInput" required ref={node => (this.inputDestination = node)} onFocus={(e) => { e.currentTarget.select() }} onBlur={this.validatePossibleInputLetter} />
+						<Form.Check type="checkbox" label="Allow route twice" ref={node => (this.checkRouteTwice = node)} />
+						Maximun Stop :
+						<Form.Control type="text" placeholder="Fill number" className="myInput" ref={node => (this.inputMaximun = node)} onFocus={(e) => { e.currentTarget.select() }} onBlur={this.validatePossibleInputNumber} />
+						Cost less than :
+						<Form.Control type="text" placeholder="Fill number" className="myInput" ref={node => (this.inputLessthan = node)} onFocus={(e) => { e.currentTarget.select() }} onBlur={this.validatePossibleInputNumber} />
+						<ButtonWithMarginLeft variant="danger" size="sm" type="submit">Calculate</ButtonWithMarginLeft>
+						{this.renderPossibleAndPaths()}
+					</OptionForm>
+				</OptionLayout>
 			)
 		}
 	}
@@ -231,7 +253,6 @@ class Eko extends Component {
 									)
 								})
 								}
-
 							</PossibleDiv>
 						)
 
